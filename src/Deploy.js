@@ -236,11 +236,22 @@ class Deploy extends Component {
         <div className="App-header">
           <table style={{"minWidth":"70%","textAlign":"center","margin":"auto"}}>
             <tbody>
-              <tr><td style={{"width":"580px"}}>
-                <img src="Blockgeeks-blue-black-white.png" alt="Blockgeeks-Logo"/>
+              <tr>
+              <td style={{"width":"170px"}}>
+                <a href="http://www.soles.io/" target="_blank"><img src="http://www.soles.io/new_glowy_logo.png" alt="SOLES-Logo" width="160px"/></a><br />
+                <a href="http://www.soles.io/" target="_blank">SOLES.io</a>
+              </td>
+              <td style={{"verticalAlign":"middle","textAlign":"center","font-size":"12px","font-weight":"bold"}}>
+                &
+              </td>
+              <td style={{"width":"450px"}}>
+                <a href="https://blockgeeks.com/" target="_blank"><img src="Blockgeeks-blue-black-white.png" alt="Blockgeeks-Logo" height="100px"/></a>
+              </td>
+              <td style={{"width":"20px","verticalAlign":"middle","textAlign":"center","font-size":"12px","font-weight":"bold"}}>
+                present
               </td><td>
-                <h2><span style={{"color":"#84DDFF"}}>Tectract&#39;s</span></h2>
-                <h1><b>EthDeployer</b></h1>
+                <h2><span style={{"color":"#84DDFF"}}><a href="https://www.github.com/Tectract" style={{"color":"#84DDFF"}} target="_blank">Tectract&#39;s</a></span></h2>
+                <h1><b><a href="https://www.github.com/Tectract/EthDeployer" style={{"color":"#FFFFFF"}} target="_blank">EthDeployer</a></b></h1>
               </td></tr>
             </tbody>
           </table>
@@ -250,7 +261,7 @@ class Deploy extends Component {
           <div>Saw default Eth account to use: <b>{ this.defaultEthAddressLink() }</b>!</div><br />
 
           <textarea
-                 rows='20' cols='120'
+                 rows='18' cols='120'
                  className="contractText"
                  name='contractText'
                  ref='contractTextRef'
@@ -266,6 +277,36 @@ class Deploy extends Component {
           <div>new contract address: { this.ethAddressLink(this.state.thisAddress) }</div>
 
           <br />
+          <br />
+          <hr />
+          <span className="app-outro">
+            <table style={{"minWidth":"70%","textAlign":"left","margin":"auto"}}>
+              <tbody>
+                <tr><td style={{"textAlign":"center"}}>
+                  <span style={{"font-size":"15px","font-weight":"bold"}}>
+                    Thank you for visiting <a href="http://www.soles.io/" target="_blank">SOLES.io</a> and <a href="https://www.github.com/Tectract/EthDeployer" target="_blank">Tectract&#39;s EthDeployer!</a><br /><br />
+                  </span>
+                </td></tr>
+                <tr><td>
+                  <span style={{"font-size":"13px","font-weight":"bold"}}>
+                    To use tool you&#39;ll need a connection to an Ethereum network, via:<br />
+                    <span style={{"padding":"0px 0px 0px 6px"}}>
+                      1. start <a href="https://github.com/ethereum/go-ethereum" target="_blank">Ethereum server</a> or <a href="https://github.com/ethereumjs/testrpc" target="_blank">testrpc server</a> running at localhost:8545, then reload this page
+                    </span><br /><span style={{"padding":"0px 0px 0px 6px"}}>
+                      2. Install <a href="https://metamask.io/" target="_blank">Metamask plugin</a>, connect to network of your choice (including Mainnet!), then reload this page
+                    </span><br />
+                    <u>notes</u>: for localhost testrpc (testnet), you don&#39;t need Metamask running, see <a href="https://github.com/Tectract/EthDeployer/blob/master/README.md" target="_blank">the README</a> for metamask signing locally & ethereumjs-testrc notes
+                    <br /><br />
+                    Author: <a href="http://www.soles.io/blog/our-team/" target="_blank">Ryan Molecke</a>, sponsored by <a href="http://blockgeeks.com/" target="_blank">BlockGeeks.com</a>!<br />
+                    Issues, comments, suggestions? Please use <a href="https://github.com/Tectract/EthDeployer/issues" target="_blank">this page</a> to start an issue ticket, do not email Ryan for help directly :)<br />
+                    If you clone this tool and set up your own EthDeployer, please include the <a href="https://github.com/Tectract/EthDeployer/blob/master/LICENSE" target="_blank">Mozilla Public License 2.0</a> & give me props, thanks! ~Ryan
+
+                  </span>
+                </td></tr>
+              </tbody>
+            </table>
+          </span>
+          <br /><br />
         </div>
       </div>
     );
