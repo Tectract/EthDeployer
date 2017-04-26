@@ -296,7 +296,8 @@ class Deploy extends Component {
                       2. Install <a href="https://metamask.io/" target="_blank">Metamask plugin</a>, connect to network of your choice (including Mainnet!), then reload this page
                     </span><br />
                     <u>notes</u>: for localhost testrpc (testnet), you don&#39;t need Metamask running, see <a href="https://github.com/Tectract/EthDeployer/blob/master/README.md" target="_blank">the README</a> for metamask signing locally & ethereumjs-testrc notes<br />
-                    <u>notes</u>: for compilation to succeed while running against localhost:8545 you&#39;ll need solc (solidity compiler) installed locally, see instructions <a href="https://solidity.readthedocs.io/en/v0.3.3/installing-solidity.html" target="_blank">here</a>
+                    <u>notes</u>: for compilation to succeed while running against localhost:8545 you&#39;ll need solc (solidity compiler) installed locally, see instructions <a href="https://solidity.readthedocs.io/en/v0.3.3/installing-solidity.html" target="_blank">here</a><br />
+                    <u>notes</u>: sometimes you may need to reload once or twice for it to see your web3.eth.accounts[0] account
                     <br /><br />
                     Author: <a href="http://www.soles.io/blog/our-team/" target="_blank">Ryan Molecke</a>, sponsored by <a href="http://blockgeeks.com/" target="_blank">BlockGeeks.com</a>!<br />
                     Issues, comments, suggestions? Please use <a href="https://github.com/Tectract/EthDeployer/issues" target="_blank">this page</a> to start an issue ticket, do not email Ryan for help directly :)<br />
