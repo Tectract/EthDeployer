@@ -60,7 +60,22 @@ npm run build     # for live server hosting mode, use apache/httpd/nginx or simi
 
 my lines in /etc/httpd/conf/httpd.conf (should be the same for /etc/apache2/sites-enabled/default.conf)
 
+note: extra lines to catch case-sensitivity on linux path spellings :)
+
 Alias /EthDeployer /home/ec2-user/EthDeployer/build
+
+Alias /ethdeployer /home/ec2-user/EthDeployer/build  
+
+Alias /ethDeployer /home/ec2-user/EthDeployer/build
+
+Alias /Ethdeployer /home/ec2-user/EthDeployer/build
+
+<Directory /home/ec2-user/EthDeployer/build>
+
+  PassengerEnabled off
+
+</Directory>
+
 
 ### How to Use
 
