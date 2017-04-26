@@ -1,6 +1,8 @@
 # EthDeployer
 A simple react app for automatically compiling &amp; deploying Solidity language Ethereum smart-contracts
 
+Easily deploy your Solidity smart-contracts against the Mainnet without actually needing shell/rpc access to a synced ethereum server!
+
 ###dependencies
 
 (install nodejs and npm, latest versions if you can)
