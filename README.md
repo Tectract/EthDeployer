@@ -13,6 +13,37 @@ npm i -g truffle             # a useful Solidity-language tool
 
 Metamask browser plugin      # for auto-signing of contracts (manual private-key signing not enabled yet)
 
+solc (solidity compiler)     # needed for localhost compiling, instructions: https://solidity.readthedocs.io/en/v0.3.3/installing-solidity.html
+
+note: it's harder to install solc on centos/amazonAMI linux, of course, I had to install solidity from source, and update boost by hand:
+
+wget http://repo.enetres.net/x86_64/boost-devel-1.59.0-1.x86_64.rpm
+
+yum --nogpgcheck localinstall boost-devel-1.59.0-1.x86_64.rpm
+
+I also had to make sure that /usr/local/lib was the last line in /etc/ld.so.conf
+
+and also run 'sudo ldconfig' afterwards for the system to notice...
+
+then installed solc from source via:
+
+git clone --recursive https://github.com/ethereum/solidity.git
+
+cd solidity/
+
+git submodule update --init --recursive
+
+mkdir build
+
+cd build
+
+cmake3 ..  # needed sudo yum install cmake3 for this
+
+make
+
+sudo make install  # so that the apache user can access the solc compiler
+
+
 ### How to install
 
 git clone https://www.github.com/Tectract/EthDeployer
@@ -32,6 +63,8 @@ Alias /EthDeployer /home/ec2-user/EthDeployer/build
 ### How to Use
 
 install metamask browser plugin (see https://metamask.io), and connect to either mainnet, or localhost:8545 (local tesrpc server)
+
+note: metamask seems bad at remembering your password! remember to keep your 12-word-passphrase!!
 
 make sure you can see accounts in metamask, and they should either be live accounts with real ether, or match your testrpc local testing accounts
 

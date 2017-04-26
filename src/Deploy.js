@@ -241,13 +241,13 @@ class Deploy extends Component {
                 <a href="http://www.soles.io/" target="_blank"><img src="http://www.soles.io/new_glowy_logo.png" alt="SOLES-Logo" width="160px"/></a><br />
                 <a href="http://www.soles.io/" target="_blank">SOLES.io</a>
               </td>
-              <td style={{"verticalAlign":"middle","textAlign":"center","font-size":"12px","font-weight":"bold"}}>
+              <td style={{"verticalAlign":"middle","textAlign":"center","fontSize":"12px","fontWeight":"bold"}}>
                 &
               </td>
               <td style={{"width":"450px"}}>
                 <a href="https://blockgeeks.com/" target="_blank"><img src="Blockgeeks-blue-black-white.png" alt="Blockgeeks-Logo" height="100px"/></a>
               </td>
-              <td style={{"width":"20px","verticalAlign":"middle","textAlign":"center","font-size":"12px","font-weight":"bold"}}>
+              <td style={{"width":"20px","verticalAlign":"middle","textAlign":"center","fontSize":"12px","fontWeight":"bold"}}>
                 present
               </td><td>
                 <h2><span style={{"color":"#84DDFF"}}><a href="https://www.github.com/Tectract" style={{"color":"#84DDFF"}} target="_blank">Tectract&#39;s</a></span></h2>
@@ -283,19 +283,20 @@ class Deploy extends Component {
             <table style={{"minWidth":"70%","textAlign":"left","margin":"auto"}}>
               <tbody>
                 <tr><td style={{"textAlign":"center"}}>
-                  <span style={{"font-size":"15px","font-weight":"bold"}}>
+                  <span style={{"fontSize":"15px","fontWeight":"bold"}}>
                     Thank you for visiting <a href="http://www.soles.io/" target="_blank">SOLES.io</a> and <a href="https://www.github.com/Tectract/EthDeployer" target="_blank">Tectract&#39;s EthDeployer!</a><br /><br />
                   </span>
                 </td></tr>
                 <tr><td>
-                  <span style={{"font-size":"13px","font-weight":"bold"}}>
+                  <span style={{"fontSize":"13px","fontWeight":"bold"}}>
                     To use tool you&#39;ll need a connection to an Ethereum network, via:<br />
                     <span style={{"padding":"0px 0px 0px 6px"}}>
                       1. start <a href="https://github.com/ethereum/go-ethereum" target="_blank">Ethereum server</a> or <a href="https://github.com/ethereumjs/testrpc" target="_blank">testrpc server</a> running at localhost:8545, then reload this page
                     </span><br /><span style={{"padding":"0px 0px 0px 6px"}}>
                       2. Install <a href="https://metamask.io/" target="_blank">Metamask plugin</a>, connect to network of your choice (including Mainnet!), then reload this page
                     </span><br />
-                    <u>notes</u>: for localhost testrpc (testnet), you don&#39;t need Metamask running, see <a href="https://github.com/Tectract/EthDeployer/blob/master/README.md" target="_blank">the README</a> for metamask signing locally & ethereumjs-testrc notes
+                    <u>notes</u>: for localhost testrpc (testnet), you don&#39;t need Metamask running, see <a href="https://github.com/Tectract/EthDeployer/blob/master/README.md" target="_blank">the README</a> for metamask signing locally & ethereumjs-testrc notes<br />
+                    <u>notes</u>: for compilation to succeed while running against localhost:8545 you&#39;ll need solc (solidity compiler) installed locally, see instructions <a href="https://solidity.readthedocs.io/en/v0.3.3/installing-solidity.html" target="_blank">here</a>
                     <br /><br />
                     Author: <a href="http://www.soles.io/blog/our-team/" target="_blank">Ryan Molecke</a>, sponsored by <a href="http://blockgeeks.com/" target="_blank">BlockGeeks.com</a>!<br />
                     Issues, comments, suggestions? Please use <a href="https://github.com/Tectract/EthDeployer/issues" target="_blank">this page</a> to start an issue ticket, do not email Ryan for help directly :)<br />
