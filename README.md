@@ -79,7 +79,7 @@ Alias /Ethdeployer /home/ec2-user/EthDeployer/build
 
 ### How to Use
 
-install metamask browser plugin (see https://metamask.io), and connect to either mainnet, or localhost:8545 (local tesrpc server)
+install metamask browser plugin (see https://metamask.io), and connect to either mainnet, or localhost:8545 (local node / testrpc server)
 
 note: metamask seems bad at remembering your password! remember to keep your 12-word-passphrase!!
 

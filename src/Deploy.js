@@ -138,11 +138,12 @@ class Deploy extends Component {
                 return null;
               } else {
                 console.log("deployment web3.eth.estimateGas amount: " + gasEstimate);
-                var ethCost = gasPrice * gasEstimate / 10000000000 / 100000000;
+                var inflatedGasCost = 2*gasEstimate;
+                var ethCost = gasPrice * 2 * gasEstimate / 10000000000 / 100000000;
                 outerThis.setState({
-                  statusMessage: "Compiled! estimateGas amount: " + gasEstimate + " (" + ethCost+ " Ether)"
+                  statusMessage: "Compiled! (inflated) estimateGas amount: " + inflatedGasCost + " (" + ethCost+ " Ether)"
                 });
-                myContract.new({from:web3.eth.accounts[0],data:code,gas:gasEstimate},function(err, newContract){
+                myContract.new({from:web3.eth.accounts[0],data:code,gas:inflatedGasCost},function(err, newContract){
                   console.log("newContract: " + newContract);
                   if(err) {
                     console.log("deployment err: " + err);
@@ -194,6 +195,10 @@ class Deploy extends Component {
 
   RegisterChange(e) {
     //console.log('registering change : ' + e.target.name + " - " + e.target.value);
+    // this.setState({
+    //   [e.target.name]: e.target.value,
+    //   "statusMessage": "ready!"
+    // }
     var newState = this.state;
     newState[e.target.name] = e.target.value;
     newState["statusMessage"] = "ready!";
