@@ -238,8 +238,8 @@ class Deploy extends Component {
             <tbody>
               <tr>
               <td style={{"width":"170px"}}>
-                <a href="http://www.soles.io/" target="_blank"><img src="http://www.soles.io/new_glowy_logo.png" alt="SOLES-Logo" width="160px"/></a><br />
-                <a href="http://www.soles.io/" target="_blank">SOLES.io</a>
+                <a href="http://www.enledger.io/" target="_blank"><img src="http://www.enledger.com/EnLedger_glowy_logo_200x200.png" alt="EnLedger-Logo" width="160px"/></a><br />
+                <a href="http://www.enledger.io/" target="_blank">EnLedger.io</a>
               </td>
               <td style={{"verticalAlign":"middle","textAlign":"center","fontSize":"12px","fontWeight":"bold"}}>
                 &
@@ -284,7 +284,7 @@ class Deploy extends Component {
               <tbody>
                 <tr><td style={{"textAlign":"center"}}>
                   <span style={{"fontSize":"15px","fontWeight":"bold"}}>
-                    Thank you for visiting <a href="http://www.soles.io/" target="_blank">SOLES.io</a> and <a href="https://www.github.com/Tectract/EthDeployer" target="_blank">Tectract&#39;s EthDeployer!</a><br /><br />
+                    Thank you for visiting <a href="http://www.enledger.io/" target="_blank">EnLedger.io</a> and <a href="https://www.github.com/Tectract/EthDeployer" target="_blank">Tectract&#39;s EthDeployer!</a><br /><br />
                   </span>
                 </td></tr>
                 <tr><td>
@@ -299,7 +299,7 @@ class Deploy extends Component {
                     <u>notes</u>: for compilation to succeed while running against localhost:8545 you&#39;ll need solc (solidity compiler) installed locally, see instructions <a href="https://solidity.readthedocs.io/en/v0.3.3/installing-solidity.html" target="_blank">here</a><br />
                     <u>notes</u>: sometimes you may need to reload once or twice for it to see your web3.eth.accounts[0] account
                     <br /><br />
-                    Author: <a href="http://www.soles.io/blog/our-team/" target="_blank">Ryan Molecke</a>, sponsored by <a href="http://blockgeeks.com/" target="_blank">BlockGeeks.com</a>!<br />
+                    Author: <a href="http://www.enledger.io/blog/our-team/" target="_blank">Ryan Molecke</a>, sponsored by <a href="http://blockgeeks.com/" target="_blank">BlockGeeks.com</a>!<br />
                     Issues, comments, suggestions? Please use <a href="https://github.com/Tectract/EthDeployer/issues" target="_blank">this page</a> to start an issue ticket, do not email Ryan for help directly :)<br />
                     If you clone this tool and set up your own EthDeployer, please include the <a href="https://github.com/Tectract/EthDeployer/blob/master/LICENSE" target="_blank">Mozilla Public License 2.0</a> & give me props, thanks! ~Ryan
 
