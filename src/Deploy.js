@@ -5,6 +5,8 @@ import _ from 'lodash';
 
 var web3 = {};
 var alreadyLoaded = false;
+var compiler;
+var optimize = 1;
 
 function loadWeb3() {
    let web3Injected = window.web3;
@@ -29,9 +31,10 @@ class Deploy extends Component {
       newFlag: 0,
       thisNetId: '',
       contractText: '',
-      statusMessage: 'ready!',
+      statusMessage: 'loading BrowserSolc compiler...',
       thisTxHash: '',
-      thisAddress: ''
+      thisAddress: '',
+      compiler: {}
     };
     this.RegisterChange = this.RegisterChange.bind(this);
   }
@@ -42,9 +45,9 @@ class Deploy extends Component {
       console.log("saw eth accounts: ");
       console.debug(web3.eth.accounts);
       //console.debug(web3.eth)
-      web3.eth.getCompilers(function(err,resp){
-        console.log("available compilers: " + resp);
-      });
+      // web3.eth.getCompilers(function(err,resp){
+      //   console.log("available compilers: " + resp);
+      // });
       web3.version.getNetwork((err, netId) => {
         var tempNetId = ''
         if(err) {
@@ -76,110 +79,106 @@ class Deploy extends Component {
     }
   }
 
+  setupCompiler(){
+    var outerThis = this;
+    setTimeout(function(){
+      // console.debug(window.BrowserSolc);
+      window.BrowserSolc.getVersions(function(soljsonSources, soljsonReleases) {
+        var compilerVersion = soljsonReleases[_.keys(soljsonReleases)[0]];
+        console.log("Browser-solc compiler version : " + compilerVersion);
+        window.BrowserSolc.loadVersion(compilerVersion, function(c) {
+          compiler = c;
+          outerThis.setState({statusMessage:"ready!"},function(){
+            console.log("Solc Version Loaded: " + compilerVersion);
+          });
+        });
+      });
+    },1000);
+  }
+
   compileAndDeploy() {
     var outerThis = this;
     console.log("compileAndDeploy called!");
     this.setState({
       statusMessage: "compiling and deploying!"
     });
-    var parsedContract = this.state.contractText.split("\n");
-    var length = parsedContract.length;
-    for(var i = 0; i<length; i++){ // only smart enough to strip trailing comments in "//" format, "/* */" format comments not yet supported
-      var removedComments = parsedContract[i].split("//")[0].trim();
-      parsedContract[i]=removedComments;
-    }
-    //console.log("parsedContract: " + parsedContract);
-    var formattedContract = ''
-    for(var j = 0; j<length; j++){
-      formattedContract = formattedContract + parsedContract[j];
-    }
-    //console.log("formattedContract: " + formattedContract);
 
-    web3.eth.compile.solidity(formattedContract,function(err, resp){
-      if(err) {
-        console.log("compile err: " + err);
-        outerThis.setState({
-          statusMessage: "compile err: " + err
-        });
-        return null;
-      } else {
-        var thisResp = '';
-        var code = '';
-        var abi = '';
-        console.debug(resp);
-        if(!!resp["<stdin>:Geekt"]){
-          thisResp = resp["<stdin>:Geekt"];  // just resp for testnet?
+    var result = compiler.compile(this.state.contractText, optimize);
+    if(result.errors){
+      outerThis.setState({
+        statusMessage: JSON.stringify(result.errors)
+      });
+    } else {
+      // console.debug(result);
+      var abi = JSON.parse(result.contracts[_.keys(result.contracts)[0]].interface);
+      //var abi = [{"constant":true,"inputs":[],"name":"getUsers","outputs":[{"name":"","type":"address[]"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"handle","type":"string"},{"name":"city","type":"bytes32"},{"name":"state","type":"bytes32"},{"name":"country","type":"bytes32"}],"name":"registerNewUser","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"SHA256notaryHash","type":"bytes32"}],"name":"getImage","outputs":[{"name":"","type":"string"},{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"}],"name":"getUser","outputs":[{"name":"","type":"string"},{"name":"","type":"bytes32"},{"name":"","type":"bytes32"},{"name":"","type":"bytes32"},{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getAllImages","outputs":[{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"imageURL","type":"string"},{"name":"SHA256notaryHash","type":"bytes32"}],"name":"addImageToUser","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"badUser","type":"address"}],"name":"removeUser","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"badImage","type":"bytes32"}],"name":"removeImage","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"}],"name":"getUserImages","outputs":[{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"inputs":[],"payable":false,"type":"constructor"}];
+      var bytecode = "0x" + result.contracts[_.keys(result.contracts)[0]].bytecode;
+      // console.log(abi);
+      var myContract = web3.eth.contract(abi);
+      console.log("bytecode: " + bytecode);
+      console.log("abi: " + abi);
+      console.log("myContract: ");
+      console.debug(myContract);
+      //console.log("myAddress: " + web3.eth.accounts[0]);
+      web3.eth.getGasPrice((err,gasPrice) => {
+        if(err){
+          console.log("deployment web3.eth.getGasPrice error: " + err);
+          outerThis.setState({
+            statusMessage: "deployment web3.eth.getGasPrice error: " + err
+          });
+          return null;
         } else {
-          thisResp = resp;
-        }
-        code = thisResp.code;
-        abi = thisResp.info.abiDefinition;
-        var myContract = web3.eth.contract(abi);
-        console.log("code: " + code);
-        console.log("abi: " + abi);
-        console.log("myContract: ");
-        console.debug(myContract);
-        //console.log("myAddress: " + web3.eth.accounts[0]);
-        web3.eth.getGasPrice((err,gasPrice) => {
-          if(err){
-            console.log("deployment web3.eth.getGasPrice error: " + err);
-            outerThis.setState({
-              statusMessage: "deployment web3.eth.getGasPrice error: " + err
-            });
-            return null;
-          } else {
-            console.log("current gasPrice (gas / ether): " + gasPrice);
-            web3.eth.estimateGas({data: code},function(err,gasEstimate){
-              if(err) {
-                console.log("deployment web3.eth.estimateGas error: " + err);
-                outerThis.setState({
-                  statusMessage: "deployment web3.eth.estimateGas error: " + err
-                });
-                return null;
-              } else {
-                console.log("deployment web3.eth.estimateGas amount: " + gasEstimate);
-                var inflatedGasCost = 2*gasEstimate;
-                var ethCost = gasPrice * 2 * gasEstimate / 10000000000 / 100000000;
-                outerThis.setState({
-                  statusMessage: "Compiled! (inflated) estimateGas amount: " + inflatedGasCost + " (" + ethCost+ " Ether)"
-                });
-                myContract.new({from:web3.eth.accounts[0],data:code,gas:inflatedGasCost},function(err, newContract){
-                  console.log("newContract: " + newContract);
-                  if(err) {
-                    console.log("deployment err: " + err);
+          console.log("current gasPrice (gas / ether): " + gasPrice);
+          web3.eth.estimateGas({data: bytecode},function(err,gasEstimate){
+            if(err) {
+              console.log("deployment web3.eth.estimateGas error: " + err);
+              outerThis.setState({
+                statusMessage: "deployment web3.eth.estimateGas error: " + err
+              });
+              return null;
+            } else {
+              console.log("deployment web3.eth.estimateGas amount: " + gasEstimate);
+              var inflatedGasCost = Math.round(1.2*gasEstimate);
+              var ethCost = gasPrice * inflatedGasCost / 10000000000 / 100000000;
+              outerThis.setState({
+                statusMessage: "Compiled! (inflated) estimateGas amount: " + inflatedGasCost + " (" + ethCost+ " Ether)"
+              });
+              myContract.new({from:web3.eth.accounts[0],data:bytecode,gas:inflatedGasCost},function(err, newContract){
+                console.log("newContract: " + newContract);
+                if(err) {
+                  console.log("deployment err: " + err);
+                  outerThis.setState({
+                    statusMessage: "deployment error: " + err
+                  });
+                  return null;
+                } else {
+                  // NOTE: The callback will fire twice!
+                  // Once the contract has the transactionHash property set and once its deployed on an address.
+                  // e.g. check tx hash on the first call (transaction send)
+                  if(!newContract.address) {
+                    console.log("Contract transaction send: TransactionHash: " + newContract.transactionHash + " waiting to be mined...");
                     outerThis.setState({
-                      statusMessage: "deployment error: " + err
+                      statusMessage: "Please wait a minute.",
+                      thisTxHash: newContract.transactionHash,
+                      thisAddress: "waiting to be mined..."
+                    });
+                  } else {
+                    console.log("Contract mined! Address: " + newContract.address);
+                    console.log(newContract);
+                    var thisNewStatus = "Contract Deployed to " + outerThis.state.thisNetId;
+                    outerThis.setState({
+                      statusMessage: thisNewStatus,
+                      thisAddress: newContract.address
                     });
                     return null;
-                  } else {
-                    // NOTE: The callback will fire twice!
-                    // Once the contract has the transactionHash property set and once its deployed on an address.
-                    // e.g. check tx hash on the first call (transaction send)
-                    if(!newContract.address) {
-                      console.log("Contract transaction send: TransactionHash: " + newContract.transactionHash + " waiting to be mined...");
-                      outerThis.setState({
-                        statusMessage: "Please wait a minute.",
-                        thisTxHash: newContract.transactionHash,
-                        thisAddress: "waiting to be mined..."
-                      });
-                    } else {
-                      console.log("Contract mined! Address: " + newContract.address);
-                      console.log(newContract);
-                      var thisNewStatus = "Contract Deployed to " + outerThis.state.thisNetId;
-                      outerThis.setState({
-                        statusMessage: thisNewStatus,
-                        thisAddress: newContract.address
-                      });
-                      return null;
-                    }
                   }
-                });
-              }
-            });
-          }
-        });
-      }
-    });
+                }
+              });
+            }
+          });
+        }
+      });
+    }
     return null;
   }
 
@@ -227,6 +226,7 @@ class Deploy extends Component {
       alreadyLoaded = true;
       loadWeb3();
       this.getInfo();
+      this.setupCompiler();
     }
   }
 

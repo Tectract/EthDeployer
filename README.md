@@ -118,7 +118,7 @@ COMMAND FROM DEMO ARTICLE: testrpc -m "sample dog come year spray crawl learn ge
 
 important note!: networkID needs to be below decimal(108) for tx signature to work properly (tx.v must be one byte only)
 
-important note!: ethereumjs-testrpc depends on OUTDATED ethereumjs-util, which has a signing bug which prevents Metamask from signing properly LOCALLY,
+outdated note (?): ethereumjs-testrpc depends on OUTDATED ethereumjs-util, which has a signing bug which prevents Metamask from signing properly LOCALLY,
 
 but it works ok on mainnet. In order to fix this for localhost testing, you can do this:
 
@@ -132,4 +132,8 @@ mv ethereumjs-util ethereumjs-util_old
 
 ln -s path-to/ethereumjs-util .
 
+for me it was: 
+
+ln -s /usr/local/lib/node_modules/ethereumjs-util/ /usr/local/lib/node_modules/ethereumjs-testrpc/node_modules/ethereumjs-util
+ 
 this symlink will TRICK ethereumjs-testrpc into using the latest version of ethereumjs-util, and solve the "signing bug" for local deployment
