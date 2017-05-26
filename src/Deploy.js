@@ -233,7 +233,6 @@ class Deploy extends Component {
   render() {
     return (
       <div className="App">
-        <script src="https://cdn.rawgit.com/ericxtang/browser-solc/master/browser-solc.min.js" type="text/javascript"></script>
         <div className="App-header">
           <table style={{"minWidth":"70%","textAlign":"center","margin":"auto"}}>
             <tbody>
