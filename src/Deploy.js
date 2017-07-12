@@ -104,7 +104,7 @@ class Deploy extends Component {
     });
 
     var result = compiler.compile(this.state.contractText, optimize);
-    if(result.errors){
+    if(result.errors && JSON.stringify(result.errors).match(/error/i)){
       outerThis.setState({
         statusMessage: JSON.stringify(result.errors)
       });
@@ -140,8 +140,12 @@ class Deploy extends Component {
               console.log("deployment web3.eth.estimateGas amount: " + gasEstimate);
               var inflatedGasCost = Math.round(1.2*gasEstimate);
               var ethCost = gasPrice * inflatedGasCost / 10000000000 / 100000000;
+              var warnings = ""
+              if(result.errors){
+                warnings = JSON.stringify(result.errors) + ", " // show warnings if they exist
+              }
               outerThis.setState({
-                statusMessage: "Compiled! (inflated) estimateGas amount: " + inflatedGasCost + " (" + ethCost+ " Ether)"
+                statusMessage: warnings + "Compiled! (inflated) estimateGas amount: " + inflatedGasCost + " (" + ethCost+ " Ether)"
               });
               myContract.new({from:web3.eth.accounts[0],data:bytecode,gas:inflatedGasCost},function(err, newContract){
                 console.log("newContract: " + newContract);
