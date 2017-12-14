@@ -7,6 +7,7 @@ var web3 = {};
 var alreadyLoaded = false;
 var compiler;
 var optimize = 1;
+var outterResult = ""
 
 function loadWeb3() {
    let web3Injected = window.web3;
@@ -109,14 +110,29 @@ class Deploy extends Component {
         statusMessage: JSON.stringify(result.errors)
       });
     } else {
-      // console.debug(result);
-      var abi = JSON.parse(result.contracts[_.keys(result.contracts)[0]].interface);
-      //var abi = [{"constant":true,"inputs":[],"name":"getUsers","outputs":[{"name":"","type":"address[]"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"handle","type":"string"},{"name":"city","type":"bytes32"},{"name":"state","type":"bytes32"},{"name":"country","type":"bytes32"}],"name":"registerNewUser","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"SHA256notaryHash","type":"bytes32"}],"name":"getImage","outputs":[{"name":"","type":"string"},{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"}],"name":"getUser","outputs":[{"name":"","type":"string"},{"name":"","type":"bytes32"},{"name":"","type":"bytes32"},{"name":"","type":"bytes32"},{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getAllImages","outputs":[{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"imageURL","type":"string"},{"name":"SHA256notaryHash","type":"bytes32"}],"name":"addImageToUser","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"badUser","type":"address"}],"name":"removeUser","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"badImage","type":"bytes32"}],"name":"removeImage","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"}],"name":"getUserImages","outputs":[{"name":"","type":"bytes32[]"}],"payable":false,"type":"function"},{"inputs":[],"payable":false,"type":"constructor"}];
-      var bytecode = "0x" + result.contracts[_.keys(result.contracts)[0]].bytecode;
-      // console.log(abi);
+      console.debug(result);
+      // we need to find which of the contracts contains the bytecode for deployment
+      // thisContractSorted = _.sortBy _.map(result.contracts, function(val,key) {
+      //   // ugly mapsort in react
+      //     return [val['abi'],key];
+      //   }
+      // ), (val) ->
+      //   return -1*parseFloat(val[0])  # this grabs the hidden timestampms from above, to sort by
+      var thisMap = _.sortBy(_.map(result.contracts, function(val,key) {
+        // ugly mapsort in react
+          return [key,val];
+        }), function(val) {
+          return -1*parseFloat(val[1].bytecode);
+        });
+
+      console.debug(thisMap);
+
+      var abi = JSON.parse(thisMap[0][1].interface);
+      var bytecode = "0x" + thisMap[0][1].bytecode;
+
       var myContract = web3.eth.contract(abi);
-      console.log("bytecode: " + bytecode);
-      console.log("abi: " + abi);
+      console.log("bytecode: " + JSON.stringify(bytecode));
+      console.log("abi: " + JSON.stringify(abi));
       console.log("myContract: ");
       console.debug(myContract);
       //console.log("myAddress: " + web3.eth.accounts[0]);
@@ -168,7 +184,7 @@ class Deploy extends Component {
                     });
                   } else {
                     console.log("Contract mined! Address: " + newContract.address);
-                    console.log(newContract);
+                    console.log(JSON.stringify(newContract));
                     var thisNewStatus = "Contract Deployed to " + outerThis.state.thisNetId;
                     outerThis.setState({
                       statusMessage: thisNewStatus,
