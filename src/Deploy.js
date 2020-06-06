@@ -7,17 +7,33 @@ var web3 = {};
 var alreadyLoaded = false;
 var compiler;
 var optimize = 1;
-var outterResult = ""
+var ethAccounts = [];
+
 
 function loadWeb3() {
    let web3Injected = window.web3;
-   if(typeof web3Injected !== 'undefined'){
-     console.log("saw injected web3!");
-     web3 = new Web3(web3Injected.currentProvider);
+   if(window.ethereum !== 'undefined') {
+     window.ethereum.enable().then(function (accounts) {
+       // You now have an array of accounts!
+       // Currently only ever one:
+       ethAccounts = accounts;
+       //console.log("accounts : " + accounts)
+       // ['0xFDEa65C8e26263F6d9A1B5de9555D2931A33b825']
+     }).catch(function (error) {
+       // Handle error. Likely the user rejected the login
+       console.log("couldn't get accounts!");
+     });
+     if(typeof web3Injected !== 'undefined'){
+       console.log("saw injected web3!");
+       web3 = new Web3(web3Injected.currentProvider);
+
+     } else {
+       console.log("did not see web3 injected!");
+       web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+       //console.debug(web3.eth.accounts);
+     }
    } else {
-     console.log("did not see web3 injected!");
-     web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-     //console.debug(web3.eth.accounts);
+     console.log("did not see metamask ethereum object injected!");
    }
 }
 
@@ -104,13 +120,36 @@ class Deploy extends Component {
       statusMessage: "compiling and deploying!"
     });
 
-    var result = compiler.compile(this.state.contractText, optimize);
+    //console.debug(compiler);
+
+    let jsonContractSource = JSON.stringify({
+        language: 'Solidity',
+        sources: {
+          'Task': {
+              content: this.state.contractText,
+           },
+        },
+        settings: {
+            outputSelection: {
+                '*': {
+                    '*': ['abi',"evm.bytecode"]
+                },
+            },
+        },
+    });
+
+    var result = compiler.compile(jsonContractSource);
+    //var result = compiler.compile(this.state.contractText);
+
+    console.log("saw result : " + result);
+    console.debug(result);
+
     if(result.errors && JSON.stringify(result.errors).match(/error/i)){
       outerThis.setState({
         statusMessage: JSON.stringify(result.errors)
       });
     } else {
-      console.debug(result);
+      console.debug(result.contracts);
       // we need to find which of the contracts contains the bytecode for deployment
       // thisContractSorted = _.sortBy _.map(result.contracts, function(val,key) {
       //   // ugly mapsort in react
@@ -118,7 +157,9 @@ class Deploy extends Component {
       //   }
       // ), (val) ->
       //   return -1*parseFloat(val[0])  # this grabs the hidden timestampms from above, to sort by
-      var thisMap = _.sortBy(_.map(result.contracts, function(val,key) {
+
+
+      var thisMap = _.sortBy(_.map(result.contracts.Task, function(val,key) {
         // ugly mapsort in react
           return [key,val];
         }), function(val) {
@@ -126,9 +167,11 @@ class Deploy extends Component {
         });
 
       console.debug(thisMap);
-
-      var abi = JSON.parse(thisMap[0][1].interface);
-      var bytecode = "0x" + thisMap[0][1].bytecode;
+      //var abi = JSON.parse(thisMap[0][1].abi);
+      var abi = thisMap[0][1].abi;
+      var bytecode = "0x" + thisMap[0][1].evm.bytecode.object;
+      // var abi = result.contracts["Task"][0].abi
+      // var bytecode = result.contracts["Task"][0].bytecode
 
       var myContract = web3.eth.contract(abi);
       console.log("bytecode: " + JSON.stringify(bytecode));
@@ -258,8 +301,8 @@ class Deploy extends Component {
             <tbody>
               <tr>
               <td style={{"width":"170px"}}>
-                <a href="http://www.enledger.io/" target="_blank"><img src="http://www.enledger.com/EnLedger_glowy_logo_200x200.png" alt="EnLedger-Logo" width="160px"/></a><br />
-                <a href="http://www.enledger.io/" target="_blank">EnLedger.io</a>
+                <a href="https://www.enledger.io/" target="_blank"><img src="https://www.enledger.io/EnLedger_Logo_381_381.png" alt="EnLedger-Logo" width="80px"/></a><br />
+                <a href="https://www.enledger.io/" target="_blank">EnLedger.io</a>
               </td>
               <td style={{"verticalAlign":"middle","textAlign":"center","fontSize":"12px","fontWeight":"bold"}}>
                 &
@@ -285,7 +328,7 @@ class Deploy extends Component {
                  className="contractText"
                  name='contractText'
                  ref='contractTextRef'
-                 style={{"backgroundColor":"#E9FEED","whiteSpace":"nowrap","resize":"none","overflowX":"hidden"}}
+                 style={{"backgroundColor":"#E9FEED","resize":"none","overflowX":"hidden"}}
                  value={this.state.contractText}
                  onChange={this.RegisterChange} />
           <br /><br />{ this.state.statusMessage }<br /><br />
@@ -304,7 +347,7 @@ class Deploy extends Component {
               <tbody>
                 <tr><td style={{"textAlign":"center"}}>
                   <span style={{"fontSize":"15px","fontWeight":"bold"}}>
-                    Thank you for visiting <a href="http://www.enledger.io/" target="_blank">EnLedger.io</a> and <a href="https://www.github.com/Tectract/EthDeployer" target="_blank">Tectract&#39;s EthDeployer!</a><br /><br />
+                    Thank you for visiting <a href="https://www.enledger.io/" target="_blank">EnLedger.io</a> and <a href="https://www.github.com/Tectract/EthDeployer" target="_blank">Tectract&#39;s EthDeployer!</a><br /><br />
                   </span>
                 </td></tr>
                 <tr><td>
@@ -319,7 +362,7 @@ class Deploy extends Component {
                     <u>notes</u>: for compilation to succeed while running against localhost:8545 you&#39;ll need solc (solidity compiler) installed locally, see instructions <a href="https://solidity.readthedocs.io/en/v0.3.3/installing-solidity.html" target="_blank">here</a><br />
                     <u>notes</u>: sometimes you may need to reload once or twice for it to see your web3.eth.accounts[0] account
                     <br /><br />
-                    Author: <a href="http://www.enledger.io/blog/our-team/" target="_blank">Ryan Molecke</a>, sponsored by <a href="http://blockgeeks.com/" target="_blank">BlockGeeks.com</a>!<br />
+                    Author: <a href="https://www.tectractys.com/u/Tectract" target="_blank">Ryan Molecke</a>, sponsored by <a href="http://blockgeeks.com/" target="_blank">BlockGeeks.com</a>!<br />
                     Issues, comments, suggestions? Please use <a href="https://github.com/Tectract/EthDeployer/issues" target="_blank">this page</a> to start an issue ticket, do not email Ryan for help directly :)<br />
                     If you clone this tool and set up your own EthDeployer, please include the <a href="https://github.com/Tectract/EthDeployer/blob/master/LICENSE" target="_blank">Mozilla Public License 2.0</a> & give me props, thanks! ~Ryan
 

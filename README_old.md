@@ -7,9 +7,44 @@ Easily deploy your Solidity smart-contracts against the Mainnet without actually
 
 (install nodejs and npm, latest versions if you can)
 
+npm i -g ethereumjs-testrpc  # for testrpc localhost testing
+
+npm i -g ethereumjs-util     # for testrpc localhost testing, see note below
+
 npm i -g truffle             # a useful Solidity-language tool
 
 Metamask browser plugin      # for auto-signing of contracts (manual private-key signing not enabled yet)
+
+solc (solidity compiler)     # needed for localhost compiling, instructions: https://solidity.readthedocs.io/en/v0.3.3/installing-solidity.html
+
+note: it's harder to install solc on centos/amazonAMI linux, of course, I had to install solidity from source, and update boost by hand:
+
+wget http://repo.enetres.net/x86_64/boost-devel-1.59.0-1.x86_64.rpm
+
+yum --nogpgcheck localinstall boost-devel-1.59.0-1.x86_64.rpm
+
+I also had to make sure that /usr/local/lib was the last line in /etc/ld.so.conf
+
+and also run 'sudo ldconfig' afterwards for the system to notice...
+
+then installed solc from source via:
+
+git clone --recursive https://github.com/ethereum/solidity.git
+
+cd solidity/
+
+git submodule update --init --recursive
+
+mkdir build
+
+cd build
+
+cmake3 ..  # needed sudo yum install cmake3 for this
+
+make
+
+sudo make install  # so that the apache user can access the solc compiler
+
 
 ### How to install
 
@@ -40,11 +75,6 @@ Alias /Ethdeployer /home/ec2-user/EthDeployer/build
   PassengerEnabled off
 
 </Directory>
-
-### Notes
-
-   fixed browser-solc.js / browser-solc.min.js to support solidity 0.5.x+ versions
-   not working in chrome or brave browsers right now!
 
 
 ### How to Use
@@ -81,3 +111,29 @@ truffle compile
 truffle migrate
 
 truffle console
+
+### testrpc startup with pre-set seed phrase and pre-defined networkID
+
+COMMAND FROM DEMO ARTICLE: testrpc -m "sample dog come year spray crawl learn general detect silver jelly pilot" --network-id 20
+
+important note!: networkID needs to be below decimal(108) for tx signature to work properly (tx.v must be one byte only)
+
+outdated note (?): ethereumjs-testrpc depends on OUTDATED ethereumjs-util, which has a signing bug which prevents Metamask from signing properly LOCALLY,
+
+but it works ok on mainnet. In order to fix this for localhost testing, you can do this:
+
+npm i -g ethereumjs-util@latest  # separately from ethereumjs-testrpc
+
+now: you need to find where ethereumjs-testrpc and ethereumjs-util actually got installed, then go to the
+
+cd path-to/ethereumjs-util/node_modules
+
+mv ethereumjs-util ethereumjs-util_old
+
+ln -s path-to/ethereumjs-util .
+
+for me it was: 
+
+ln -s /usr/local/lib/node_modules/ethereumjs-util/ /usr/local/lib/node_modules/ethereumjs-testrpc/node_modules/ethereumjs-util
+ 
+this symlink will TRICK ethereumjs-testrpc into using the latest version of ethereumjs-util, and solve the "signing bug" for local deployment

@@ -6,9 +6,9 @@
     "react-scripts": "0.9.5"
   },
   "dependencies": {
-    "lodash": "^4.17.4",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
+    "lodash": "^4.17.15",
+    "react": "^15.6.2",
+    "react-dom": "^15.6.2",
     "web3": "^0.18.4"
   },
   "scripts": {
